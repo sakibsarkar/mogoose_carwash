@@ -13,7 +13,7 @@ const handleCastError = (err: mongoose.Error.CastError): IGenericErrorRes => {
 
   return {
     statusCode,
-    message: "Invalid ID",
+    message: "Cast Error",
     errorSources,
   };
 };

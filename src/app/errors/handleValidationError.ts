@@ -1,17 +1,10 @@
 import mongoose from "mongoose";
 import { IErrorSources, IGenericErrorRes } from "../interface/error";
 
-const handleValidationError = (
-  err: mongoose.Error.ValidationError
-): IGenericErrorRes => {
-  const errorSources: IErrorSources = Object.values(err.errors).map(
-    (val: mongoose.Error.ValidatorError | mongoose.Error.CastError) => {
-      return {
-        path: val?.path,
-        message: val?.message,
-      };
-    }
-  );
+const handleValidationError = (err: mongoose.Error.ValidationError): IGenericErrorRes => {
+  const errorSources: IErrorSources = Object.values(err.errors).map((el) => {
+    return { path: el.path, message: el.message };
+  });
 
   const statusCode = 400;
 

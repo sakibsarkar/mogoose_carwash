@@ -1,12 +1,9 @@
-import { ZodError, ZodIssue } from "zod";
+import { ZodError } from "zod";
 import { IErrorSources, IGenericErrorRes } from "../interface/error";
 
 const handleZodError = (err: ZodError): IGenericErrorRes => {
-  const errorSources: IErrorSources = err.issues.map((issue: ZodIssue) => {
-    return {
-      path: issue?.path[issue.path.length - 1],
-      message: issue.message,
-    };
+  const errorSources: IErrorSources = err.errors.map((error) => {
+    return { path: error.path.join('.'), message: error.message };
   });
 
   const statusCode = 400;
