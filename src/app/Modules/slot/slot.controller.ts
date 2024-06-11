@@ -3,13 +3,12 @@ import sendResponse from "../../../utils/sendResponse";
 import Service from "../service/service.model";
 import slotService from "./slot.service";
 
-const { createSlot } = slotService;
+const { createSlot, getAllAvailableSlotsService } = slotService;
 
 export const createSlotsIntoDB = catchAsyncError(async (req, res) => {
   const { body } = req;
 
   const isServiceExist = await Service.findById(body.service);
-  console.log(isServiceExist);
 
   if (!isServiceExist) {
     return sendResponse(res, {
@@ -20,11 +19,30 @@ export const createSlotsIntoDB = catchAsyncError(async (req, res) => {
     });
   }
 
-  const result = await createSlot(body);
+  const result = await createSlot(body, isServiceExist.duration);
   sendResponse(res, {
     success: true,
     statusCode: 200,
     message: "Slots created successfully",
     data: result,
+  });
+});
+
+export const getAllAvailableSlots = catchAsyncError(async (req, res) => {
+  const query = req.query;
+  const result = await getAllAvailableSlotsService(query);
+  if (result.length > 0) {
+    return sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Available slots retrieved successfully",
+      data: result,
+    });
+  }
+  sendResponse(res, {
+    message: "No data found",
+    data: [],
+    success: false,
+    statusCode: 404,
   });
 });
