@@ -3,24 +3,12 @@ import { AnyZodObject } from "zod";
 
 export const validSchema = (schema: AnyZodObject) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      await schema.safeParseAsync(req.body);
-      next();
-    } catch (error) {
-      return next(error);
-    }
-  };
-};
-export const validBodySchema = (schema: AnyZodObject) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      await schema.parseAsync({
-        body: req.body,
-      });
+    const { success, error } = await schema.safeParseAsync(req.body);
 
+    if (success) {
       next();
-    } catch (err) {
-      next(err);
+    } else {
+      next(error);
     }
   };
 };

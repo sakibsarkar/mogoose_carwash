@@ -3,7 +3,7 @@ import sendResponse from "../../../utils/sendResponse";
 import { User } from "./user.model";
 import userService from "./user.service";
 
-const { createUserService } = userService;
+const { createUserService, logInUserService } = userService;
 export const createUserIntoDB = catchAsyncError(async (req, res) => {
   const { body } = req;
   const isExist = await User.isUserExistsByEmail(body.email);
@@ -23,4 +23,35 @@ export const createUserIntoDB = catchAsyncError(async (req, res) => {
     message: "User registered successfully",
     data: result,
   });
+});
+
+export const logInUser = catchAsyncError(async (req, res) => {
+  const { body } = req;
+  const { matched, token, notfound, user } = await logInUserService(body);
+  if (notfound === false) {
+    return sendResponse(res, {
+      message: "user not found for this email",
+      success: false,
+      data: null,
+      statusCode: 404,
+    });
+  }
+
+  if (matched === false) {
+    return sendResponse(res, {
+      message: "Password didn't matched",
+      success: false,
+      data: null,
+      statusCode: 401,
+    });
+  }
+
+  res.json({
+    success: true,
+    statusCode: 200,
+    token,
+    message: "User logged in successfully",
+    data: user,
+  });
+  
 });

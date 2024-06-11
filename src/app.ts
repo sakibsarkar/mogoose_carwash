@@ -13,7 +13,7 @@ app.use(morgan("dev"));
 app.get("/", (req, res) => {
   res.send("Hello from server");
 });
-app.use("/api/v1",router)
+app.use("/api",router)
 // 404 Handler
 app.use(notFound);
 

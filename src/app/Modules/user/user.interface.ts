@@ -14,11 +14,6 @@ export default IUser;
 export interface UserModel extends Model<IUser> {
   //instance methods for checking if the user exist
   isUserExistsByEmail(id: string): Promise<IUser>;
-  //instance methods for checking if passwords are matched
-  isPasswordMatched(
-    plainTextPassword: string,
-    hashedPassword: string
-  ): Promise<boolean>;
 }
 
 export type TUserRole = keyof typeof USER_ROLE;
