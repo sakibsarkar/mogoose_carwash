@@ -1,7 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import globalErrorHandler from "./app/middlewere/globalError";
-import { notFound } from "./app/middlewere/not-foun";
+import { notFound } from "./app/middlewere/not-found";
 import router from "./app/routes";
 
 const app = express();
