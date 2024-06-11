@@ -3,6 +3,7 @@ import { authorizeRoles, isAuthenticatedUser } from "../../middlewere/auth";
 import { validSchema } from "../../middlewere/validator";
 import {
   createServiceIntoDB,
+  deleteServiceById,
   getAllServiceFromDB,
   getServiceById,
   updateServiceById,
@@ -24,6 +25,12 @@ router.put(
   isAuthenticatedUser,
   authorizeRoles("admin"),
   updateServiceById
+);
+router.delete(
+  "/:id",
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  deleteServiceById
 );
 
 const serviceRoutes = router;

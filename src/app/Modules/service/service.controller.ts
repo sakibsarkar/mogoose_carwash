@@ -4,8 +4,13 @@ import sendResponse from "../../../utils/sendResponse";
 import Service from "./service.model";
 import servicesService from "./service.service";
 
-const { createService, getSingleService, getAllServices, updateSingleService } =
-  servicesService;
+const {
+  createService,
+  getSingleService,
+  getAllServices,
+  updateSingleService,
+  deleteSingleService,
+} = servicesService;
 
 export const createServiceIntoDB = catchAsyncError(async (req, res, next) => {
   const { body } = req;
@@ -89,6 +94,35 @@ export const updateServiceById = catchAsyncError(async (req, res) => {
   }
 
   const result = await updateSingleService(id, body);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Service updated successfully",
+    data: result,
+  });
+});
+export const deleteServiceById = catchAsyncError(async (req, res) => {
+  const id = req.params.id;
+  const isValidId = isValidObjectId(id);
+  if (!isValidId) {
+    return sendResponse(res, {
+      message: "Invalid object id",
+      data: null,
+      statusCode: 400,
+      success: false,
+    });
+  }
+  const isExist = Service.findById(id);
+  if (!isExist) {
+    return sendResponse(res, {
+      message: "Service not found",
+      data: null,
+      statusCode: 404,
+      success: false,
+    });
+  }
+
+  const result = await deleteSingleService(id);
   sendResponse(res, {
     success: true,
     statusCode: 200,
