@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+import ISlot from "./slot.interface";
 
-const bookingSchema = new Schema(
+const bookingSchema = new Schema<ISlot>(
   {
     service: {
       type: Schema.Types.ObjectId,

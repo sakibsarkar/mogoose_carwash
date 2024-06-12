@@ -12,7 +12,7 @@ export const getSingleService = async (id: string) => {
 };
 
 const getAllServices = async () => {
-  const result = await Service.find();
+  const result = await Service.find({ isDeleted: false });
   return result;
 };
 
