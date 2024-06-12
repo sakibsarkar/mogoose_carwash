@@ -1,24 +1,45 @@
 import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 import { catchAsyncError } from "../../utils/catchAsyncError";
+import sendResponse from "../../utils/sendResponse";
 import { User } from "../Modules/user/user.model";
 import Config from "../config";
 
 export const isAuthenticatedUser = catchAsyncError(async (req, res, next) => {
   const getToken = req.header("Authorization");
 
-  if (!getToken)
-    return res.status(400).json({ msg: "Invalid Authentication." });
+  if (!getToken) {
+    return sendResponse(res, {
+      data: null,
+      message: "Invalid authentication",
+      success: false,
+      statusCode: 401,
+    });
+  }
 
   const token = getToken.split(" ")[1];
   const decoded: any = jwt.verify(token, Config.jwt_access_secret as string);
 
-  if (!decoded) return res.status(400).json({ msg: "Invalid Authentication." });
+  if (!decoded) {
+    return sendResponse(res, {
+      data: null,
+      message: "Invalid authentication",
+      success: false,
+      statusCode: 401,
+    });
+  }
 
   const user = await User.findOne({ email: decoded?.email }).select(
     "-password"
   );
-  if (!user) return res.status(400).json({ msg: "User does not exist." });
+  if (!user) {
+    return sendResponse(res, {
+      data: null,
+      message: "User not found",
+      success: false,
+      statusCode: 404,
+    });
+  }
 
   req.user = user;
 

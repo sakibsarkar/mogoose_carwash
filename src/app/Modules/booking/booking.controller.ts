@@ -6,7 +6,8 @@ import Slot from "../slot/slot.model";
 import { IBooking } from "./booking.interface";
 import { bookingService } from "./booking.service";
 
-const { createBookingService } = bookingService;
+const { createBookingService, getAllBookingService, getUserBookingsService } =
+  bookingService;
 
 export const createBookingIntoDB = catchAsyncError(async (req, res, next) => {
   const x = {
@@ -73,5 +74,43 @@ export const createBookingIntoDB = catchAsyncError(async (req, res, next) => {
     statusCode: 200,
     message: "Booking successful",
     data: result,
+  });
+});
+
+export const getAllBookings = catchAsyncError(async (req, res, next) => {
+  const result = await getAllBookingService();
+
+  if (result.length > 0) {
+    return sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "All bookings retrieved successfully",
+      data: result,
+    });
+  }
+  sendResponse(res, {
+    success: false,
+    statusCode: 404,
+    message: "No Data Found",
+    data: [],
+  });
+});
+
+export const getUserBookings = catchAsyncError(async (req, res, next) => {
+  const user = req.user;
+  const result = await getUserBookingsService(user._id);
+  if (result.length > 0) {
+    return sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "User bookings retrieved successfully",
+      data: result,
+    });
+  }
+  sendResponse(res, {
+    success: false,
+    statusCode: 404,
+    message: "No Data Found",
+    data: [],
   });
 });

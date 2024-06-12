@@ -17,4 +17,24 @@ const createBookingService = async (payload: IBooking) => {
   return result;
 };
 
-export const bookingService = { createBookingService };
+const getAllBookingService = async () => {
+  const result = await Booking.find()
+    .populate("service")
+    .populate("slot")
+    .populate("customer");
+  return result;
+};
+
+const getUserBookingsService = async (userId: string) => {
+  const result = await Booking.find({ customer: userId })
+    .populate("service")
+    .populate("slot")
+    .populate("customer");
+  return result;
+};
+
+export const bookingService = {
+  createBookingService,
+  getAllBookingService,
+  getUserBookingsService,
+};

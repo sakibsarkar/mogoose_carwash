@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authorizeRoles, isAuthenticatedUser } from "../../middlewere/auth";
-import { createBookingIntoDB } from "./booking.controller";
+import { createBookingIntoDB, getAllBookings } from "./booking.controller";
 
 const router = Router();
 router.post(
@@ -9,6 +9,7 @@ router.post(
   authorizeRoles("user"),
   createBookingIntoDB
 );
+router.get("/", isAuthenticatedUser, authorizeRoles("user"), getAllBookings);
 
 const bookingRoutes = router;
 export default bookingRoutes;
