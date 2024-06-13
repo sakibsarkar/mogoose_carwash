@@ -3,8 +3,7 @@ import { Request, Response } from "express";
 export const notFound = (req: Request, res: Response) => {
   res.status(404).json({
     success: false,
-    message: "Route not found",
-    method: req.method,
-    route: req.path,
+    statusCode: 404,
+    message: "Not Found",
   });
 };
