@@ -28,7 +28,7 @@ export const createUserIntoDB = catchAsyncError(async (req, res) => {
 export const logInUser = catchAsyncError(async (req, res) => {
   const { body } = req;
   const { matched, token, notfound, user } = await logInUserService(body);
-  if (notfound === false) {
+  if (notfound === true) {
     return sendResponse(res, {
       message: "user not found for this email",
       success: false,
@@ -36,6 +36,8 @@ export const logInUser = catchAsyncError(async (req, res) => {
       statusCode: 404,
     });
   }
+
+
 
   if (matched === false) {
     return sendResponse(res, {
@@ -53,5 +55,4 @@ export const logInUser = catchAsyncError(async (req, res) => {
     message: "User logged in successfully",
     data: user,
   });
-  
 });

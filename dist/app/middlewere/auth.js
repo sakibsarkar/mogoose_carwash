@@ -14,34 +14,51 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authorizeRoles = exports.isAuthenticatedUser = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const catchAsyncError_1 = require("../../utils/catchAsyncError");
+const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const user_model_1 = require("../Modules/user/user.model");
 const config_1 = __importDefault(require("../config"));
-const AppError_1 = __importDefault(require("../errors/AppError"));
-const isAuthenticatedUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const getToken = req.header("Authorization");
-        if (!getToken)
-            return res.status(400).json({ msg: "Invalid Authentication." });
-        const token = getToken.split(" ")[1];
-        const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
-        if (!decoded)
-            return res.status(400).json({ msg: "Invalid Authentication." });
-        const user = yield user_model_1.User.findOne({ _id: decoded === null || decoded === void 0 ? void 0 : decoded._id }).select("-password");
-        if (!user)
-            return res.status(400).json({ msg: "User does not exist." });
-        req.user = user;
-        next();
+exports.isAuthenticatedUser = (0, catchAsyncError_1.catchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const getToken = req.header("Authorization");
+    if (!getToken) {
+        return (0, sendResponse_1.default)(res, {
+            data: null,
+            message: "Invalid authentication",
+            success: false,
+            statusCode: 401,
+        });
     }
-    catch (err) {
-        return res.status(500).json({ msg: err.message });
+    const token = getToken.split(" ")[1];
+    const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
+    if (!decoded) {
+        return (0, sendResponse_1.default)(res, {
+            data: null,
+            message: "Invalid authentication",
+            success: false,
+            statusCode: 401,
+        });
     }
-});
-exports.isAuthenticatedUser = isAuthenticatedUser;
+    const user = yield user_model_1.User.findOne({ email: decoded === null || decoded === void 0 ? void 0 : decoded.email }).select("-password");
+    if (!user) {
+        return (0, sendResponse_1.default)(res, {
+            data: null,
+            message: "User not found",
+            success: false,
+            statusCode: 404,
+        });
+    }
+    req.user = user;
+    next();
+}));
 const authorizeRoles = (...roles) => {
     return (req, res, next) => {
         var _a;
-        if (!roles.includes((_a = req.user) === null || _a === void 0 ? void 0 : _a.user_type)) {
-            throw new AppError_1.default(403, "Forbiden access");
+        if (!roles.includes((_a = req.user) === null || _a === void 0 ? void 0 : _a.role)) {
+            return res.json({
+                success: false,
+                statusCode: 401,
+                message: "You have no access to this route",
+            });
         }
         next();
     };

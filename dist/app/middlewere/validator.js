@@ -9,30 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validBodySchema = exports.validSchema = void 0;
+exports.validSchema = void 0;
 const validSchema = (schema) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            yield schema.safeParseAsync(req.body);
+        const { success, error } = yield schema.safeParseAsync(req.body);
+        if (success) {
             next();
         }
-        catch (error) {
-            return next(error);
+        else {
+            console.log(error);
+            next(error);
         }
     });
 };
 exports.validSchema = validSchema;
-const validBodySchema = (schema) => {
-    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            yield schema.parseAsync({
-                body: req.body,
-            });
-            next();
-        }
-        catch (err) {
-            next(err);
-        }
-    });
-};
-exports.validBodySchema = validBodySchema;

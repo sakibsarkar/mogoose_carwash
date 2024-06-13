@@ -1,4 +1,4 @@
-# Project Name
+# Mongoose Car wash
 
 ## Introduction
 
@@ -11,6 +11,7 @@ To get started with the project, follow the instructions below:
 ### Prerequisites
 
 Make sure you have the following software installed on your machine:
+
 - Git
 - Node.js (v20.9.0 recommended)
 - Yarn
@@ -19,15 +20,15 @@ Make sure you have the following software installed on your machine:
 
 First, clone the repository using the following command:
 
-
-``` 
-git clone https://github.com/sakibsarkar/mongoose_eComerce.git 
+```
+git clone https://github.com/sakibsarkar/mogoose_carwash.git
 
 ```
 
 ### Installing Dependencies
 
 Open the project file in terminal and run `yarn install`
+
 ```
 yarn install
 
@@ -38,14 +39,17 @@ yarn install
 Create a .env file in the root directory of the project and add your MongoDB credentials:
 
 ```
-MONGO_NAME=your_mongodb_username
-MONGO_PASS=your_mongodb_password
-MONGO_DB=your_database_name
+MONGO_NAME=your mongodb username
+MONGO_PASS=your mongodb password
+MONGO_DB=your database name
+NODE_ENV="development"
+JWT_ACCESS_SECRET=secret key for jwt token
 ```
 
 ### Running the Project
 
 Once you have set up the environment variables, you can run the project locally.
+
 ```
 yarn dev
 

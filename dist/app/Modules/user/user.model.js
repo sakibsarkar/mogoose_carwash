@@ -17,35 +17,35 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const mongoose_1 = require("mongoose");
 const config_1 = __importDefault(require("../../config"));
 const userSchema = new mongoose_1.Schema({
-    id: {
+    name: {
         type: String,
         required: true,
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
     },
     password: {
         type: String,
         required: true,
+        select: 0,
     },
-    needsPasswordChange: {
-        type: Boolean,
-        default: true,
+    phone: {
+        type: String,
+        required: true,
     },
     role: {
         type: String,
-        enum: ["user", "admin"],
+        enum: ["admin", "user"],
+        default: "user",
     },
-    status: {
+    address: {
         type: String,
-        enum: ["in-progress", "blocked"],
-        default: "in-progress",
-    },
-    isDeleted: {
-        type: Boolean,
-        default: false,
-    },
-    passwordChangedAt: {
-        type: Date,
-        required: false,
-        default: new Date(),
+        required: true,
     },
 }, {
     timestamps: true,
@@ -53,28 +53,13 @@ const userSchema = new mongoose_1.Schema({
 userSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = this; // doc
-        // hashing password and save into DB
         user.password = yield bcrypt_1.default.hash(user.password, Number(config_1.default.bcrypt_salt_rounds));
         next();
     });
 });
-// set '' after saving password
-userSchema.post("save", function (doc, next) {
-    doc.password = "";
-    next();
-});
-userSchema.statics.isUserExistsByCustomId = function (id) {
+userSchema.statics.isUserExistsByEmail = function (email) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield exports.User.findOne({ id }).select("+password");
+        return yield exports.User.findOne({ email }).select("+password");
     });
-};
-userSchema.statics.isPasswordMatched = function (plainTextPassword, hashedPassword) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield bcrypt_1.default.compare(plainTextPassword, hashedPassword);
-    });
-};
-userSchema.statics.isJWTIssuedBeforePasswordChanged = function (passwordChangedTimestamp, jwtIssuedTimestamp) {
-    const passwordChangedTime = new Date(passwordChangedTimestamp).getTime() / 1000;
-    return passwordChangedTime > jwtIssuedTimestamp;
 };
 exports.User = (0, mongoose_1.model)("User", userSchema);
