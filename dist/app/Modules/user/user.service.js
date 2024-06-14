@@ -8,6 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -17,7 +28,9 @@ const user_model_1 = require("./user.model");
 const user_utils_1 = require("./user.utils");
 const createUserService = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.User.create(payload);
-    return result;
+    const resultObj = result.toObject();
+    const { password } = resultObj, rest = __rest(resultObj, ["password"]);
+    return rest;
 });
 const logInUserService = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.isUserExistsByEmail(payload.email);
@@ -32,7 +45,9 @@ const logInUserService = (payload) => __awaiter(void 0, void 0, void 0, function
     }
     const tokenObj = { email: user.email, role: user.role };
     const token = (0, jwtToken_1.default)(tokenObj, "7d");
-    return { token, user };
+    const { address, email, name, phone, role } = user;
+    const usreRes = yield user_model_1.User.findOne({ email: user.email });
+    return { token, user: usreRes };
 });
 const userService = {
     createUserService,
